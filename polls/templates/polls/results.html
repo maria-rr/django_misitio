@@ -1,16 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Resultados</title>
-</head>
-<body>
-    <h1>{{question.question_text}}</h1>
-    <ul>
+{% extends "base.html" %}
+
+{% block title %}Encuestas{% endblock %}
+
+{% block content %}
+<section>
+    <h1 class="text-3xl font-bold pb-8">{{question.question_text}}</h1>
+    <ul class="max-w-md space-y-1  list-disc list-inside dark:text-blue-950 pb-8">
         {%for choice in question.choice_set.all%}
             <li>{{choice.choice_text}} -- {{choice.votes}} vote{{choice.votes|pluralize}}</li>
         {%endfor%}
     </ul>
-    <a href="{%url 'polls:detail' question.id %}">Vote again?</a>
-</body>
-</html>
+    <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
+       href="{%url 'polls:detail' question.id %}">Volver a Votar</a>
+    <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
+       href="{%url 'polls:index' %}">Regresar</a>
+</section>
+{% endblock %}

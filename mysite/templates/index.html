@@ -1,12 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-<h1>Hola desde el home</h1>
-<p><a href="{%url 'polls:index'%}">Encuestas</a>  </p>
-<p><a href="{%url 'mapas:index'%}">Mapa</a>  </p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-2">
+  <div class="rounded-2xl bg-white p-6 shadow-sm">
+    <h1 class="text-3xl font-bold">Hola desde el home 👋</h1>
+    <p class="mt-2 text-slate-600">
+      Bienvenido. Elige a dónde ir:
+    </p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a href="{% url 'polls:index' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        Encuestas
+      </a>
+      <a href="{% url 'mapas:index' %}"
+         class="inline-flex items-center rounded-lg bg-slate-800 px-4 py-2 font-medium text-white hover:bg-black/80">
+        Mapa
+      </a>
+    </div>
+  </div>
+
+  <div class="rounded-2xl bg-gradient-to-br from-sky-100 to-indigo-100 p-6">
+    <h2 class="text-xl font-semibold">Novedades</h2>
+    <ul class="mt-3 list-disc pl-6 text-slate-700 space-y-1">
+      <li>Tailwind integrado con Django</li>
+      <li>Plantilla base con navegación</li>
+      <li>Componentes accesibles y responsive</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

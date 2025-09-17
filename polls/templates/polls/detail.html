@@ -1,22 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Detail</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Encuestas{% endblock %}
+
+{% block content %}
+<sections>
 
     <form action="{% url 'polls:vote' question.id %}"method="post">
         {% csrf_token %}
-        <fieldset>
-            <legend> <h1>{{ question.question_text}}</h1> </legend>
+        <fieldset class="pb-8">
+            <legend> <h1 class="text-3xl font-bold pb-8 ">{{ question.question_text}}</h1> </legend>
             {% if error_message %}<p><strong> {{error_message}}</strong>  </p>{% endif %}
             {% for choice in question.choice_set.all %}
+              <span class="space-y-4">
                 <input  type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.id}}" />
                 <label for="choice{{forloop.counter}}">{{choice.choice_text}} </label><br/>
+              </span>
             {% endfor %}
         </fieldset>
-        <input type="submit" value="Vote" />
+        <input type="submit" value="Votar"  class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"/>
+         <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
+       href="{%url 'polls:index' %}">Regresar</a>
     </form>
-</body>
-</html>
+</sections>
+{% endblock %}
