@@ -4,38 +4,38 @@ from django.shortcuts import  HttpResponse,HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
-from .models import Choice,Question
+from .models import Respuesta,Pregunta
 
 #def index(request):
 #	return HttpResponse("Hello, world. I'm Maria")
 
 def detail(request, question_id):
     #try:
-    question = get_object_or_404(Question, pk=question_id)
-    #except Question.DoesNotExist:
+    question = get_object_or_404(Pregunta, pk=question_id)
+    #except Pregunta.DoesNotExist:
     #    raise Http404("La pregunta no existe")
-    return render(request, "polls/detail.html",{"question":question})
+    return render(request, "polls/detail.html",{"pregunta":question})
 
 def results(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, "polls/results.html",{"question":question})
+    question = get_object_or_404(Pregunta, pk=question_id)
+    return render(request, "polls/results.html",{"pregunta":question})
 
 def vote(request, question_id):
     #return HttpResponse("Estas votando la pregunta %s." % question_id)
-    question = get_object_or_404(Question, pk=question_id)
+    question = get_object_or_404(Pregunta, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
-    except (KeyError, Choice.DoesNotExist):
+    except (KeyError, Respuesta.DoesNotExist):
         return render(
             request,
             "polls/detail.html",
             {
-                "question":question,
+                "pregunta":question,
                 "error_message":"No seleccionaste una opción.",
             },
         )
     else:
-        selected_choice.votes=F("votes")+1
+        selected_choice.votos= F("votos") + 1
         selected_choice.save()
 
         return HttpResponseRedirect(reverse("polls:results",args=(question.id,)) )
@@ -43,7 +43,7 @@ def vote(request, question_id):
 
 
 def index(request):
-    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    latest_question_list = Pregunta.objects.order_by("-publicacion_fh")[:5]
     context = {"latest_question_list": latest_question_list}
     return render(request, "polls/index.html", context)
 
@@ -54,7 +54,7 @@ def index(request):
     #    "latest_question_list": latest_question_list,
     #}
     #V1
-    #output = ", ".join([q.question_text for q in latest_question_list])
+    #output = ", ".join([q.pregunta_ds for q in latest_question_list])
     return HttpResponse(template.render(context, request))
 
 class IndexView(generic.ListView):
@@ -62,16 +62,16 @@ class IndexView(generic.ListView):
     context_object_name = "latest_question_list"
 
     def get_queryset(self):
-        return Question.objects.order_by("-pub_date")[:5]
+        return Pregunta.objects.order_by("-publicacion_fh")[:5]
 
 
 class DatailView(generic.DetailView):
-    model = Question
+    model = Pregunta
     template_name = "polls/detail.html"
 
 
 class ResultsView(generic.DetailView):
-    model =Question
+    model =Pregunta
     template_name = "polls/results.html"
 
 

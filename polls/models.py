@@ -3,20 +3,20 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField("date published")
+class Pregunta(models.Model):
+    pregunta_ds = models.CharField(max_length=200)
+    publicacion_fh = models.DateTimeField("fecha publicacion")
     def __str__(self):
-        return self.question_text
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        return self.pregunta_ds
+    def fue_publicada_recientemente(self):
+        return self.publicacion_fh >= timezone.now() - datetime.timedelta(days=1)
 
 
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length= 200)
-    votes = models.IntegerField(default=0)
+class Respuesta(models.Model):
+    pregunta = models.ForeignKey(Pregunta, on_delete=models.CASCADE)
+    respuesta_ds = models.CharField(max_length= 200)
+    votos = models.IntegerField(default=0)
     def __str__(self):
-        return self.choice_text
+        return self.respuesta_ds
 
 # Create your models here.
