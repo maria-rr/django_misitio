@@ -5,15 +5,15 @@
 {% block content %}
 <sections>
 
-    <form action="{% url 'polls:vote' question.id %}"method="post">
+    <form action="{% url 'polls:vote' pregunta.id %}"method="post">
         {% csrf_token %}
         <fieldset class="pb-8">
-            <legend> <h1 class="text-3xl font-bold pb-8 ">{{ question.question_text}}</h1> </legend>
+            <legend> <h1 class="text-3xl font-bold pb-8 ">{{ pregunta.pregunta_ds}}</h1> </legend>
             {% if error_message %}<p><strong> {{error_message}}</strong>  </p>{% endif %}
-            {% for choice in question.choice_set.all %}
+            {% for respuesta in pregunta.respuesta_set.all %}
               <span class="space-y-4">
-                <input  type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.id}}" />
-                <label for="choice{{forloop.counter}}">{{choice.choice_text}} </label><br/>
+                <input  type="radio" name="respuesta" id="respuesta{{forloop.counter}}" value="{{respuesta.id}}" />
+                <label for="respuesta{{forloop.counter}}">{{respuesta.respuesta_ds}} </label><br/>
               </span>
             {% endfor %}
         </fieldset>

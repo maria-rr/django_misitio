@@ -9,57 +9,57 @@ from .models import Respuesta,Pregunta
 #def index(request):
 #	return HttpResponse("Hello, world. I'm Maria")
 
-def detail(request, question_id):
+def detail(request, pregunta_id):
     #try:
-    question = get_object_or_404(Pregunta, pk=question_id)
+    pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
     #except Pregunta.DoesNotExist:
     #    raise Http404("La pregunta no existe")
-    return render(request, "polls/detail.html",{"pregunta":question})
+    return render(request, "polls/detail.html",{"pregunta":pregunta})
 
-def results(request, question_id):
-    question = get_object_or_404(Pregunta, pk=question_id)
-    return render(request, "polls/results.html",{"pregunta":question})
+def results(request, pregunta_id):
+    pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
+    return render(request, "polls/results.html",{"pregunta":pregunta})
 
-def vote(request, question_id):
-    #return HttpResponse("Estas votando la pregunta %s." % question_id)
-    question = get_object_or_404(Pregunta, pk=question_id)
+def vote(request, pregunta_id):
+    #return HttpResponse("Estas votando la pregunta %s." % pregunta_id)
+    pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST["choice"])
+        pregunta_seleccionada = pregunta.respuesta_set.get(pk=request.POST["respuesta"])
     except (KeyError, Respuesta.DoesNotExist):
         return render(
             request,
             "polls/detail.html",
             {
-                "pregunta":question,
+                "pregunta":pregunta,
                 "error_message":"No seleccionaste una opción.",
             },
         )
     else:
-        selected_choice.votos= F("votos") + 1
-        selected_choice.save()
+        pregunta_seleccionada.votos= F("votos") + 1
+        pregunta_seleccionada.save()
 
-        return HttpResponseRedirect(reverse("polls:results",args=(question.id,)) )
+        return HttpResponseRedirect(reverse("polls:results",args=(pregunta.id,)) )
 
 
 
 def index(request):
-    latest_question_list = Pregunta.objects.order_by("-publicacion_fh")[:5]
-    context = {"latest_question_list": latest_question_list}
-    return render(request, "polls/index.html", context)
+    preguntas_recientes_lista = Pregunta.objects.order_by("-publicacion_fh")[:5]
+    contexto = {"preguntas_recientes_lista": preguntas_recientes_lista}
+    return render(request, "polls/index.html", contexto)
 
 
     #V2
     #template = loader.get_template("polls/index.html")
     #context = {
-    #    "latest_question_list": latest_question_list,
+    #    "preguntas_recientes_lista": preguntas_recientes_lista,
     #}
     #V1
-    #output = ", ".join([q.pregunta_ds for q in latest_question_list])
+    #output = ", ".join([q.pregunta_ds for q in preguntas_recientes_lista])
     return HttpResponse(template.render(context, request))
 
 class IndexView(generic.ListView):
     template_name = "polls/index.html"
-    context_object_name = "latest_question_list"
+    context_object_name = "preguntas_recientes_lista"
 
     def get_queryset(self):
         return Pregunta.objects.order_by("-publicacion_fh")[:5]
