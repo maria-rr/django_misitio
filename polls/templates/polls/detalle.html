@@ -5,7 +5,7 @@
 {% block content %}
 <sections>
 
-    <form action="{% url 'polls:vote' pregunta.id %}"method="post">
+    <form action="{% url 'polls:votacion' pregunta.id %}"method="post">
         {% csrf_token %}
         <fieldset class="pb-8">
             <legend> <h1 class="text-3xl font-bold pb-8 ">{{ pregunta.pregunta_ds}}</h1> </legend>
@@ -17,9 +17,10 @@
               </span>
             {% endfor %}
         </fieldset>
-        <input type="submit" value="Votar"  class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"/>
+        <input type="submit" value="Votar"
+               class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"/>
          <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
-       href="{%url 'polls:index' %}">Regresar</a>
+       href="{%url 'polls:inicio' %}">Regresar</a>
     </form>
 </sections>
 {% endblock %}

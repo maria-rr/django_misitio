@@ -7,12 +7,12 @@
     <h1 class="text-3xl font-bold pb-8">{{pregunta.pregunta_ds}}</h1>
     <ul class="max-w-md space-y-1  list-disc list-inside dark:text-blue-950 pb-8">
         {%for respuesta in pregunta.respuesta_set.all%}
-            <li>{{respuesta.respuesta_ds}} -- {{respuesta.votos}} vote{{respuesta.votos|pluralize}}</li>
+            <li>{{respuesta.respuesta_ds}} -- {{respuesta.votos}} voto{{respuesta.votos|pluralize}}</li>
         {%endfor%}
     </ul>
     <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
-       href="{%url 'polls:detail' pregunta.id %}">Volver a Votar</a>
+       href="{%url 'polls:detalle' pregunta.id %}">Volver a Votar</a>
     <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
-       href="{%url 'polls:index' %}">Regresar</a>
+       href="{%url 'polls:inicio' %}">Regresar</a>
 </section>
 {% endblock %}

@@ -8,7 +8,7 @@
     <h1 class="text-3xl font-bold pb-8">Encuestas</h1>
     <ul class="space-y-4 list-disc">
         {% for pregunta in preguntas_recientes_lista %}{# hover:text-blue-900  dark:text-blue-400  dark:bg-blue-800 #}
-            <li><a href="{%url 'polls:detail' pregunta.id %}"
+            <li><a href="{%url 'polls:detalle' pregunta.id %}"
                 class="inline-flex items-center justify-center p-5 dark:text-blue-950
                 text-base font-medium  rounded-lg bg-blue-200
                  dark:hover:bg-blue-700 dark:hover:text-white"
