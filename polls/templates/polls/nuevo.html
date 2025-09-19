@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Pregunta{% endblock %}
+
+{% block head_scripts %}
+   <!-- Incluir jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Función para agregar un nuevo input para respuesta
+            $("#agregar_respuesta").click(function(e) {
+                e.preventDefault();  // Evita el comportamiento predeterminado del enlace
+
+                // Crear un nuevo input
+                var nuevoInput = $('<div class="flex items-center space-x-2"><input type="text" name="respuesta_ds" maxlength="200" required placeholder="Escribe tu respuesta" class="p-2 border border-gray-300 rounded-md w-full"><button type="button" class="text-red-500 hover:text-red-700 delete-respuesta">&times;</button></div>');
+
+                // Agregar el nuevo input antes del botón de envío
+                $("#formulario_respuestas").append(nuevoInput);
+            });
+
+            // Función para eliminar un input de respuesta
+            $(document).on('click', '.delete-respuesta', function() {
+                $(this).closest('div').remove();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<section class="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Crear Nueva Pregunta</h1>
+
+    <form method="POST" action="{% url 'polls:nuevo' %}">
+        {% csrf_token %}
+
+        <!-- Campo Pregunta -->
+        <div class="mb-4">
+            <label for="id_pregunta_ds" class="block text-gray-700">Pregunta:</label>
+            <input type="text" name="pregunta_ds" id="id_pregunta_ds" required maxlength="200" placeholder="Escribe la pregunta" class="mt-1 p-2 border border-gray-300 rounded-md w-full" />
+        </div>
+
+        <!-- Campo de Respuestas -->
+        <div id="formulario_respuestas" class="space-y-4">
+            <div class="flex items-center space-x-2">
+                <input type="text" name="respuesta_ds" maxlength="200" required placeholder="Escribe tu respuesta" class="p-2 border border-gray-300 rounded-md w-full" />
+                <button type="button" class="text-red-500 hover:text-red-700 delete-respuesta">&times;</button>
+            </div>
+        </div>
+
+        <!-- Enlace para agregar más respuestas -->
+        <div class="mt-4">
+            <a href="#" id="agregar_respuesta" class="text-blue-600 hover:text-blue-800">Agregar otra respuesta</a>
+        </div>
+
+        <!-- Botón para enviar el formulario -->
+        <div class="mt-6 text-center">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Agregar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

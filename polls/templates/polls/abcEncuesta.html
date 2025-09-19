@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="grid gap-6 md:grid-cols-2">
+  <div class="rounded-2xl bg-white p-7 shadow-sm">
+    <h1 class="text-3xl font-bold">Menu Administrar Encuestas</h1>
+    <p class="mt-2 text-slate-600">
+      Bienvenido. Elige la opción:
+    </p>
+    <div class="mt-7 flex flex-wrap gap-4">
+      <a href="{% url 'polls:nuevo' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        Agregar
+      </a>
+        <a href="{% url 'polls:lista_preguntas' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+         Consultar -Editar - Eliminar
+      </a>
+
+    </div>
+  </div>
+
+
+</section>
+{% endblock %}

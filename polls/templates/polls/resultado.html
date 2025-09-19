@@ -10,8 +10,11 @@
             <li>{{respuesta.respuesta_ds}} -- {{respuesta.votos}} voto{{respuesta.votos|pluralize}}</li>
         {%endfor%}
     </ul>
-    <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
-       href="{%url 'polls:detalle' pregunta.id %}">Volver a Votar</a>
+     {% if contestar_encuesta %}
+            <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
+             href="{%url 'polls:detalle' pregunta.id %}">Volver a Votar</a>
+     {% endif %}
+
     <a class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 "
        href="{%url 'polls:inicio' %}">Regresar</a>
 </section>

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Editar{% endblock %}
+
+{% block content %}
+<section class="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Editar Pregunta</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Campo para la pregunta -->
+        <div class="mb-6">
+            <label for="id_pregunta_ds" class="block text-gray-700 mb-2">Pregunta:</label>
+            <input type="text" name="pregunta_ds" id="id_pregunta_ds" value="{{ pregunta.pregunta_ds }}" required maxlength="200"
+                   class="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Escribe la pregunta">
+        </div>
+
+        <!-- Mostrar respuestas existentes -->
+        <div id="formulario_respuestas" class="space-y-4">
+            {% for respuesta in respuestas %}
+            <div class="flex items-center space-x-2">
+                <input type="text" name="respuesta_ds" value="{{ respuesta.respuesta_ds }}" required maxlength="200"
+                       class="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                       placeholder="Escribe tu respuesta">
+                <a href="#" class="text-red-500 hover:text-red-700 delete-respuesta" data-id="{{ respuesta.id }}">Eliminar</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Enlace para agregar más respuestas -->
+        <div class="mt-4">
+            <a href="#" id="agregar_respuesta" class="text-blue-600 hover:text-blue-800 transition duration-200">Agregar otra respuesta</a>
+        </div>
+
+        <!-- Botón para enviar el formulario -->
+        <div class="mt-6 text-center">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Guardar cambios</button>
+        </div>
+    </form>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Función para agregar un nuevo input para respuesta
+        $("#agregar_respuesta").click(function(e) {
+            e.preventDefault();  // Evita el comportamiento predeterminado del enlace
+
+            // Crear un nuevo input
+            var nuevoInput = $('<div class="flex items-center space-x-2"><input type="text" name="respuesta_ds" maxlength="200" required placeholder="Escribe tu respuesta" class="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"><a href="#" class="text-red-500 hover:text-red-700 delete-respuesta">Eliminar</a></div>');
+
+            // Agregar el nuevo input antes del botón de envío
+            $("#formulario_respuestas").append(nuevoInput);
+        });
+
+        // Función para eliminar una respuesta
+        $(document).on('click', '.delete-respuesta', function(e) {
+            e.preventDefault();
+
+            var respuestaId = $(this).data('id'); // Obtiene el ID de la respuesta a eliminar
+
+            // Si hay un ID, significa que estamos eliminando una respuesta existente en la base de datos
+            if (respuestaId) {
+                // Asegúrate de eliminar la respuesta en la base de datos cuando se hace clic
+                $.ajax({
+                    url: '{% url "polls:eliminar_respuesta" respuesta_id=0 %}'.replace('0', respuestaId),
+                    type: 'POST',
+                    data: { 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                    success: function() {
+                        // Eliminar el input de la interfaz
+                        $(this).parent().remove();
+                    }.bind(this)
+                });
+            } else {
+                // Si no tiene un ID, es una respuesta dinámica, solo eliminamos del DOM
+                $(this).parent().remove();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

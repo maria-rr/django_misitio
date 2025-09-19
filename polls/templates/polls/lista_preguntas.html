@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Lista de Preguntas</h1>
+<ul class="space-y-3">
+    {% for pregunta in preguntas %}
+        <li class="flex items-center justify-between bg-white p-4 rounded-lg shadow hover:bg-gray-50">
+            <span class="text-lg font-semibold">{{ pregunta.pregunta_ds }}</span>
+
+            <!-- Enlaces con Tailwind -->
+            <div class="space-x-4">
+                <a href="{% url 'polls:resultado' pregunta.id %}"
+                   class="text-blue-600 hover:text-blue-800 transition duration-200">Detalle</a> |
+                <a href="{% url 'polls:editar_pregunta_respuestas' pregunta.id %}"
+                   class="text-green-600 hover:text-green-800 transition duration-200">Editar</a> |
+                <a href="{% url 'polls:eliminar_pregunta' pregunta.id %}"
+                   class="text-red-600 hover:text-red-800 transition duration-200">Eliminar</a>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+
+<!-- Crear nueva pregunta -->
+<a href="{% url 'polls:nuevo' %}"
+   class="mt-5 inline-block text-white bg-blue-600 hover:bg-blue-700 rounded-lg px-6 py-2 text-lg font-medium transition duration-300">
+   Crear nueva pregunta
+</a>
+
+{% endblock %}
