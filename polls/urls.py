@@ -8,4 +8,5 @@ urlpatterns = [
     path("<int:pregunta_id>/", views.detalle, name="detalle"),
     path("<int:pregunta_id>/resultado/", views.resultado, name="resultado"),
     path("<int:pregunta_id>/votacion/", views.votacion, name="votacion"),
+    path("encuesta",views.encuesta, name="encuesta"),
 ]

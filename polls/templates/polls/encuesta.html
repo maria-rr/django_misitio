@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Realizar Encuesta</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Realizar encuesta{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-3">
+  <div class="rounded-2xl bg-white p-7 shadow-sm">
+    <h1 class="text-3xl font-bold">Menu encuestas</h1>
+    <p class="mt-2 text-slate-600">
+      Bienvenido. Elige la opción:
+    </p>
+    <div class="mt-7 flex flex-wrap gap-4">
+      <a href="{% url 'polls:inicio' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        Realizar Encuesta
+      </a>
+        <a href="{% url 'polls:inicio' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        Consultar Resultados
+      </a>
+         <a href="{% url 'polls:inicio' %}"
+         class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        Administrar Encuesta
+      </a>
+
+    </div>
+  </div>
+
+
+</section>
+{% endblock %}

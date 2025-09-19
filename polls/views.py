@@ -12,8 +12,8 @@ def inicio(request):
     contexto = {"preguntas_recientes_lista": preguntas_recientes_lista}
     return render(request, "polls/inicio.html", contexto)
 
-#def encuesta(request):
-    #ej    return render(request, 'mapas/inicio.html')
+def encuesta(request):
+    return render(request, 'polls/encuesta.html')
 
 
 def detalle(request, pregunta_id):
