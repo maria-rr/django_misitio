@@ -76,11 +76,21 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+#V1
+#DATABASES = {
+#   'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',  # Importante: usa 'postgis'
+        'NAME': 'misitiobd',  # Nombre base de datos
+        'USER': 'postgres',  # El nombre de usuario de PostgreSQL
+        'PASSWORD': 'admin',  # La contraseña de PostgreSQL
+        'HOST': 'localhost',  # O la IP de tu servidor de PostgreSQL
+        'PORT': '5432',  # Puerto por defecto de PostgreSQL
     }
 }
 

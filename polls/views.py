@@ -6,8 +6,15 @@ from django.urls import reverse
 from django.views import generic
 from .models import Respuesta,Pregunta
 
-#def inicio(request):
-#	return HttpResponse("Hello, world. I'm Maria")
+
+def inicio(request):
+    preguntas_recientes_lista = Pregunta.objects.order_by("-publicacion_fh")[:5]
+    contexto = {"preguntas_recientes_lista": preguntas_recientes_lista}
+    return render(request, "polls/inicio.html", contexto)
+
+#def encuesta(request):
+    #ej    return render(request, 'mapas/inicio.html')
+
 
 def detalle(request, pregunta_id):
     #try:
@@ -42,20 +49,7 @@ def votacion(request, pregunta_id):
 
 
 
-def inicio(request):
-    preguntas_recientes_lista = Pregunta.objects.order_by("-publicacion_fh")[:5]
-    contexto = {"preguntas_recientes_lista": preguntas_recientes_lista}
-    return render(request, "polls/inicio.html", contexto)
 
-
-    #V2
-    #template = loader.get_template("polls/inicio.html")
-    #context = {
-    #    "preguntas_recientes_lista": preguntas_recientes_lista,
-    #}
-    #V1
-    #output = ", ".join([q.pregunta_ds for q in preguntas_recientes_lista])
-    return HttpResponse(template.render(context, request))
 
 class IndexView(generic.ListView):
     template_name = "polls/inicio.html"
@@ -65,14 +59,14 @@ class IndexView(generic.ListView):
         return Pregunta.objects.order_by("-publicacion_fh")[:5]
 
 
-class DetailView(generic.DetailView):
-    model = Pregunta
-    template_name = "polls/detalle.html"
+#class DetailView(generic.DetailView):
+#    model = Pregunta
+#    template_name = "polls/detalle.html"
 
 
-class ResultsView(generic.DetailView):
-    model =Pregunta
-    template_name = "polls/resultado.html"
+#class ResultsView(generic.DetailView):
+#    model =Pregunta
+#    template_name = "polls/resultado.html"
 
 
 # Create your views here.
