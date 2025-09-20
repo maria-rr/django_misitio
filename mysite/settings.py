@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+# Inicializar django-environ
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f%5=bnnwxv3o953)s^1=a_8-(!ufvu8)r#+-j%nd*ycz9$9)b)'
+
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 
 # Application definition
@@ -76,21 +83,17 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-#V1
-#DATABASES = {
-#   'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',  # Importante: usa 'postgis'
-        'NAME': 'misitiobd',  # Nombre base de datos
-        'USER': 'postgres',  # El nombre de usuario de PostgreSQL
-        'PASSWORD': 'admin',  # La contraseña de PostgreSQL
-        'HOST': 'localhost',  # O la IP de tu servidor de PostgreSQL
-        'PORT': '5432',  # Puerto por defecto de PostgreSQL
+
+        'ENGINE': 'django.db.backends.postgresql',  # Usamos PostGIS
+        'NAME': env('DATABASE_NAME'),  # Nombre de la base de datos
+        'USER': env('DATABASE_USER'),  # Usuario de la base de datos
+        'PASSWORD': env('DATABASE_PASSWORD'),  # Contraseña de la base de datos
+        'HOST': env('DATABASE_HOST'),  # Host de la base de datos
+        'PORT': env('DATABASE_PORT', default='5432'),  # Puerto de la base de datos (por defecto 5432)
     }
 }
 
