@@ -63,16 +63,18 @@
 
             // Si hay un ID, significa que estamos eliminando una respuesta existente en la base de datos
             if (respuestaId) {
-                // Asegúrate de eliminar la respuesta en la base de datos cuando se hace clic
-                $.ajax({
-                    url: '{% url "polls:eliminar_respuesta" respuesta_id=0 %}'.replace('0', respuestaId),
-                    type: 'POST',
-                    data: { 'csrfmiddlewaretoken': '{{ csrf_token }}' },
-                    success: function() {
-                        // Eliminar el input de la interfaz
-                        $(this).parent().remove();
-                    }.bind(this)
-                });
+                //  eliminar la respuesta en la base de datos cuando se hace clic
+                if (confirm("Respuesta almacenada ¿Estás seguro de eliminala?")) {
+                    $.ajax({
+                        url: '{% url "polls:eliminar_respuesta" respuesta_id=0 %}'.replace('0', respuestaId),
+                        type: 'POST',
+                        data: { 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                        success: function() {
+                            // Eliminar el input de la interfaz
+                            $(this).parent().remove();
+                        }.bind(this)
+                    });
+                 }
             } else {
                 // Si no tiene un ID, es una respuesta dinámica, solo eliminamos del DOM
                 $(this).parent().remove();

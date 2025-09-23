@@ -116,13 +116,19 @@ def eliminar_pregunta(request, pregunta_id):
 
 
 # Vista para eliminar una respuesta
-def eliminar_respuesta(request, respuesta_id):
+def eliminar_respuesta_resp(request, respuesta_id):
     respuesta = get_object_or_404(Respuesta, pk=respuesta_id)
     pregunta_id = respuesta.pregunta.id
     if request.method == 'POST':
         respuesta.delete()
         return redirect('polls:detalle_pregunta', pregunta_id=pregunta_id)
     return render(request, 'polls/eliminar_respuesta.html', {'respuesta': respuesta})
+
+def eliminar_respuesta(request, respuesta_id):
+    if request.method == 'POST':
+        respuesta = get_object_or_404(Respuesta, pk=respuesta_id)
+        respuesta.delete()
+        return JsonResponse({'success': True})
 
 
 

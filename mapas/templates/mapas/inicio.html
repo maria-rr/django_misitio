@@ -1,92 +1,145 @@
 {% extends "base.html" %}
-
 {% load static %}
-
 
 {% block title %}Mapa{% endblock %}
 
 {% block styles %}
-  {{ block.super }}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-         crossorigin=""/>
+{{ block.super }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
 
-    <style>
-        #map { height: 500px; }
-    </style>
+<style>
+  #map { height: 500px; }
+
+  .layer-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    z-index: 1000;
+    font-family: sans-serif;
+  }
+
+  .layer-panel h4 { margin: 0 0 6px 0; font-size: 14px; }
+
+  .basemap-preview, .overlay-preview { width: 50px; height: 50px; margin: 2px; cursor: pointer; border: 2px solid transparent; }
+  .basemap-preview.active, .overlay-preview.active { border-color: #1e3a8a; }
+
+  .overlay-toggle { margin-top: 6px; display: flex; align-items: center; cursor: pointer; font-size: 13px; }
+  .overlay-toggle input { margin-right: 4px; }
+</style>
 {% endblock %}
 
 {% block head_scripts %}
-     {{ block.super }}
-     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+{{ block.super }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
-
 <section>
-    <h1 class="text-3xl font-bold pb-8">Alcadías CDMX</h1>
-    <div id="map"></div>
-<script>
-    const url = '{% static 'mapas/alcaldias.geojson' %}';
-    var map = L.map('map').setView([19.4326, -99.1332], 10); // CDMX
+  <h1 class="text-3xl font-bold pb-8">Alcadías CDMX</h1>
+  <div id="map"></div>
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-        // Cargar el GeoJSON
-   fetch(url)
-    .then(r => r.json())
-    .then(geo => {
-      const getColor = v =>
-        v > 1000000 ? '#800026' :
-        v > 700000  ? '#BD0026' :
-        v > 400000  ? '#E31A1C' :
-        v > 200000  ? '#FC4E2A' :
-        v > 100000  ? '#FD8D3C' : '#FEB24C';
+  <script>
+    var map = L.map('map').setView([19.4326, -99.1332], 10);
 
-      const style = f => ({
-        color: '#1e3a8a',
-        weight: 1,
-        fillOpacity: 0.4,
-        fillColor: f.properties?.poblacion
-          ? getColor(f.properties.poblacion)
-          : '#60a5fa' // color por defecto si no hay 'poblacion'
-      });
+    // Capas base
+    var osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' });
+    var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap' });
+    osmLayer.addTo(map);
 
-      let geojsonLayer; // para resetear estilos en mouseout
+    var baseLayers = { "OSM": osmLayer, "Topo": topoLayer };
 
-      const onEach = (f, layer) => {
-        const nombre = f.properties?.nombre || f.properties?.NOMGEO || 'Sin nombre';
-        const pobl   = f.properties?.poblacion;
+    // Overlay LayerGroup
+    var overlayAlcaldias = L.layerGroup().addTo(map);
 
-        layer.bindTooltip(nombre, { sticky: true });
+    fetch("{% static 'mapas/alcaldias.geojson' %}")
+      .then(r => r.json())
+      .then(geo => {
+        const getColor = v => v > 1000000 ? '#800026' :
+                               v > 700000  ? '#BD0026' :
+                               v > 400000  ? '#E31A1C' :
+                               v > 200000  ? '#FC4E2A' :
+                               v > 100000  ? '#FD8D3C' : '#FEB24C';
 
-        layer.on({
-          mouseover: e => {
-            e.target.setStyle({ weight: 3, fillOpacity: 0.65 });
-            e.target.bringToFront();
-          },
-          mouseout:  e => geojsonLayer.resetStyle(e.target),
-          click:     e => map.fitBounds(e.target.getBounds())
+        const style = f => ({
+          color: '#1e3a8a',
+          weight: 1,
+          fillOpacity: 0.4,
+          fillColor: f.properties?.poblacion ? getColor(f.properties.poblacion) : '#60a5fa'
         });
 
-        // Popup opcional
-        layer.bindPopup(
-          `<strong>${nombre}</strong>` + (pobl ? `<br>Población: ${pobl.toLocaleString()}` : '')
-        );
-      };
+        const onEachFeature = (f, layer) => {
+          const nombre = f.properties?.nombre || f.properties?.NOMGEO || 'Sin nombre';
+          const pobl = f.properties?.poblacion;
+          layer.bindTooltip(nombre, { sticky: true });
+          layer.bindPopup(`<strong>${nombre}</strong>` + (pobl ? `<br>Población: ${pobl.toLocaleString()}` : ''));
+          layer.on({
+            mouseover: e => { e.target.setStyle({ weight: 3, fillOpacity: 0.65 }); e.target.bringToFront(); },
+            mouseout: e => geojsonLayer.resetStyle(e.target),
+            click: e => map.fitBounds(e.target.getBounds())
+          });
+        };
 
-      geojsonLayer = L.geoJSON(geo, { style, onEachFeature: onEach }).addTo(map);
-      map.fitBounds(geojsonLayer.getBounds());
+        var geojsonLayer = L.geoJSON(geo, { style: style, onEachFeature: onEachFeature });
+        geojsonLayer.addTo(overlayAlcaldias);
+        map.fitBounds(geojsonLayer.getBounds());
+      });
 
-      // Regla/escala opcional
-      L.control.scale().addTo(map);
+    // Panel flotante
+    var panel = L.DomUtil.create('div', 'layer-panel');
+    var title = L.DomUtil.create('h4', '', panel);
+
+
+    // --- Mini previews capas base ---
+    Object.keys(baseLayers).forEach(name => {
+      var layer = baseLayers[name];
+      var img = document.createElement('img');
+      img.src = name === "OSM" ? "{% static 'mapas/osm_preview.jpg' %}" : "{% static 'mapas/topo_preview.jpg' %}";
+      img.classList.add('basemap-preview');
+      if(map.hasLayer(layer)) img.classList.add('active');
+
+      img.addEventListener('click', () => {
+        Object.values(baseLayers).forEach(l => map.removeLayer(l));
+        map.addLayer(layer);
+        document.querySelectorAll('.basemap-preview').forEach(el => el.classList.remove('active'));
+        img.classList.add('active');
+      });
+      panel.appendChild(img);
     });
 
+    // --- Mini previews overlay ---
+    var overlayTitle = L.DomUtil.create('h4', '', panel);
+    //overlayTitle.innerText = "Overlays";
+    var overlayDiv = document.createElement('div');
+    overlayDiv.classList.add('overlay-toggle');
 
-    </script>
+    var overlayImg = document.createElement('img');
+    overlayImg.src = "{% static 'mapas/alcaldias_preview.jpg' %}"; // thumbnail del GeoJSON
+    overlayImg.classList.add('overlay-preview');
+    if(map.hasLayer(overlayAlcaldias)) overlayImg.classList.add('active');
+
+    overlayImg.addEventListener('click', () => {
+      if(map.hasLayer(overlayAlcaldias)) map.removeLayer(overlayAlcaldias);
+      else map.addLayer(overlayAlcaldias);
+      overlayImg.classList.toggle('active');
+    });
+
+    overlayDiv.appendChild(overlayImg);
+    var label = document.createElement('span');
+    //label.innerText = "Alcaldías";
+    overlayDiv.appendChild(label);
+    panel.appendChild(overlayDiv);
+
+    map.getContainer().appendChild(panel);
+    L.control.scale().addTo(map);
+  </script>
 </section>
 {% endblock %}
